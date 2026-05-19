@@ -1,4 +1,9 @@
 const Recommend = {
+    escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    },
+
     init() {
         this.loadPopular();
     },
@@ -10,10 +15,10 @@ const Recommend = {
                 const container = document.getElementById('recommend-list');
                 let html = '';
                 for (const m of data.movies) {
-                    html += '<div class="rec-item" data-id="' + m.douban_id + '">' +
-                        '<span>' + m.title + '</span>' +
-                        '<span class="rec-rating">' + m.rating + '</span>' +
-                        '<br><small>' + (m.year || '') + '</small>' +
+                    html += '<div class="rec-item" data-id="' + this.escapeHtml(m.douban_id) + '">' +
+                        '<span>' + this.escapeHtml(m.title) + '</span>' +
+                        '<span class="rec-rating">' + this.escapeHtml(m.rating) + '</span>' +
+                        '<br><small>' + this.escapeHtml(m.year || '') + '</small>' +
                     '</div>';
                 }
                 container.innerHTML = html;
@@ -39,10 +44,10 @@ const Recommend = {
                 let html = '';
                 const movies = data.movies.slice(0, 6);
                 for (const m of movies) {
-                    html += '<div class="rec-item" data-id="' + m.douban_id + '">' +
-                        '<span>' + m.title + '</span>' +
-                        '<span class="rec-rating">' + m.rating + '</span>' +
-                        '<br><small>' + (m.year || '') + '</small>' +
+                    html += '<div class="rec-item" data-id="' + this.escapeHtml(m.douban_id) + '">' +
+                        '<span>' + this.escapeHtml(m.title) + '</span>' +
+                        '<span class="rec-rating">' + this.escapeHtml(m.rating) + '</span>' +
+                        '<br><small>' + this.escapeHtml(m.year || '') + '</small>' +
                     '</div>';
                 }
                 container.innerHTML = html;
@@ -62,10 +67,10 @@ const Recommend = {
                 const container = document.getElementById('recommend-list');
                 let html = '';
                 for (const m of data.movies) {
-                    html += '<div class="rec-item" data-id="' + m.douban_id + '">' +
-                        '<span>' + m.title + '</span>' +
-                        '<span class="rec-rating">' + m.rating + '</span>' +
-                        '<br><small style="color:#888">' + (m.reason || '') + '</small>' +
+                    html += '<div class="rec-item" data-id="' + this.escapeHtml(m.douban_id) + '">' +
+                        '<span>' + this.escapeHtml(m.title) + '</span>' +
+                        '<span class="rec-rating">' + this.escapeHtml(m.rating) + '</span>' +
+                        '<br><small style="color:#888">' + this.escapeHtml(m.reason || '') + '</small>' +
                     '</div>';
                 }
                 container.innerHTML = html;

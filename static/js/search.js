@@ -1,4 +1,9 @@
 const Search = {
+    escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    },
+
     init() {
         const input = document.getElementById('search-input');
         let debounceTimer;
@@ -24,11 +29,11 @@ const Search = {
                 const all = data.movies.concat(data.persons);
                 for (const item of all) {
                     const label = item.type === 'movie' ? '电影' : '人物';
-                    const name = item.title || item.name;
-                    html += '<div class="search-item" data-type="' + item.type + '" data-id="' + item.douban_id + '" data-name="' + name + '">' +
-                        '<span class="type-tag ' + item.type + '">' + label + '</span>' + name +
-                        (item.year ? ' (' + item.year + ')' : '') +
-                        (item.rating ? ' ★' + item.rating : '') +
+                    const name = this.escapeHtml(item.title || item.name);
+                    html += '<div class="search-item" data-type="' + this.escapeHtml(item.type) + '" data-id="' + this.escapeHtml(item.douban_id) + '" data-name="' + name + '">' +
+                        '<span class="type-tag ' + this.escapeHtml(item.type) + '">' + label + '</span>' + name +
+                        (item.year ? ' (' + this.escapeHtml(item.year) + ')' : '') +
+                        (item.rating ? ' ★' + this.escapeHtml(item.rating) : '') +
                     '</div>';
                 }
                 if (all.length === 0) html = '<div class="search-item" style="color:#999">无结果</div>';
@@ -49,13 +54,13 @@ const Search = {
         fetch('/api/genres').then(r => r.json()).then(genres => {
             const sel = document.getElementById('filter-genre');
             genres.forEach(g => {
-                sel.innerHTML += '<option value="' + g.name + '">' + g.name + ' (' + g.count + ')</option>';
+                sel.innerHTML += '<option value="' + this.escapeHtml(g.name) + '">' + this.escapeHtml(g.name) + ' (' + g.count + ')</option>';
             });
         });
         fetch('/api/countries').then(r => r.json()).then(countries => {
             const sel = document.getElementById('filter-country');
             countries.forEach(c => {
-                sel.innerHTML += '<option value="' + c.name + '">' + c.name + ' (' + c.count + ')</option>';
+                sel.innerHTML += '<option value="' + this.escapeHtml(c.name) + '">' + this.escapeHtml(c.name) + ' (' + c.count + ')</option>';
             });
         });
     },

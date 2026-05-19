@@ -130,9 +130,20 @@ const GraphVis = {
         const tooltip = document.getElementById('graph-tooltip');
         node.on('mouseover', (event, d) => {
             tooltip.style.display = 'block';
-            tooltip.innerHTML = '<strong>' + d.label + '</strong><br>' + (d.title || d.name || d.value || '');
-            if (d.rating) tooltip.innerHTML += '<br>评分: ' + d.rating;
-            if (d.year) tooltip.innerHTML += '<br>年份: ' + d.year;
+            while (tooltip.firstChild) tooltip.removeChild(tooltip.firstChild);
+            const strong = document.createElement('strong');
+            strong.textContent = d.label;
+            tooltip.appendChild(strong);
+            tooltip.appendChild(document.createElement('br'));
+            tooltip.appendChild(document.createTextNode(d.title || d.name || d.value || ''));
+            if (d.rating) {
+                tooltip.appendChild(document.createElement('br'));
+                tooltip.appendChild(document.createTextNode('评分: ' + d.rating));
+            }
+            if (d.year) {
+                tooltip.appendChild(document.createElement('br'));
+                tooltip.appendChild(document.createTextNode('年份: ' + d.year));
+            }
         }).on('mousemove', (event) => {
             tooltip.style.left = (event.offsetX + 12) + 'px';
             tooltip.style.top = (event.offsetY - 10) + 'px';
