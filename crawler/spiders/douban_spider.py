@@ -58,25 +58,6 @@ class DoubanSpider(scrapy.Spider):
 
         yield movie
 
-        # 爬取关联人物详情页
-        all_persons = movie['directors'] + movie['writers'] + movie['actors']
-        seen_ids = set()
-        for person in all_persons:
-            pid = person['douban_id']
-            if pid and pid not in seen_ids:
-                seen_ids.add(pid)
-                yield response.follow(
-                    f'https://movie.douban.com/celebrity/{pid}/',
-                    callback=self.parse_person
-                )
-
-        # 爬取"喜欢这部电影的人也喜欢"中的电影（控制扩展数量）
-        for rid in movie['related_movie_ids'][:5]:
-            yield response.follow(
-                f'https://movie.douban.com/subject/{rid}/',
-                callback=self.parse_movie
-            )
-
     def parse_person(self, response):
         """解析人物详情页"""
         person = PersonItem()

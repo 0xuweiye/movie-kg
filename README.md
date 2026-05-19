@@ -30,19 +30,46 @@
 
 ## 快速开始
 
-1. 创建虚拟环境并激活:
+1. 安装依赖:
    ```bash
-   python -m venv venv
-   # Linux/macOS
-   source venv/bin/activate
-   # Windows
-   venv\Scripts\activate
+   pip install -r requirements.txt
    ```
-2. 安装依赖: `pip install -r requirements.txt`
-3. 启动 Neo4j 数据库
-4. 运行爬虫: `cd crawler && scrapy crawl douban -o ../data/movies.jsonl`
-5. 清洗数据: `python scripts/clean_data.py` *(后续任务实现)*
-6. 导入 Neo4j: `python scripts/import_neo4j.py` *(后续任务实现)*
-7. 知识推理: `python scripts/inference.py` *(后续任务实现)*
-8. 启动后端: `python backend/app.py` *(后续任务实现)*
-9. 访问 http://localhost:5000
+
+2. 启动 Neo4j 数据库，设置你的密码
+
+3. 生成样本数据（或运行爬虫获取 Top250 列表数据）:
+   ```bash
+   # 先爬取 Top250 列表（列表页可以直接爬取）
+   cd crawler && PYTHONPATH=.. python -m scrapy crawl douban
+   # 生成包含详情数据的完整数据集
+   cd .. && python scripts/generate_sample_data.py
+   ```
+
+4. 清洗数据:
+   ```bash
+   python scripts/clean_data.py
+   ```
+
+5. 导入 Neo4j:
+   ```bash
+   NEO4J_PASS=你的密码 python scripts/import_neo4j.py
+   ```
+
+6. 知识推理:
+   ```bash
+   NEO4J_PASS=你的密码 python scripts/inference.py
+   ```
+
+7. 启动后端:
+   ```bash
+   NEO4J_PASS=你的密码 PYTHONPATH=. python backend/app.py
+   ```
+
+8. 访问 http://localhost:5000
+
+## 知识图谱规模
+
+- 电影: 125 部
+- 人物: 53 位
+- 类型: 17 种
+- 关系: 约 280 条（含推理生成的合作关系和相似电影关系）

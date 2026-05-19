@@ -19,7 +19,7 @@ def infer_collaborations(session):
         MATCH (p1:Person)-[:ACTS_IN|DIRECTED]->(m:Movie)<-[:ACTS_IN|DIRECTED]-(p2:Person)
         WHERE id(p1) < id(p2)
         WITH p1, p2, count(DISTINCT m) AS collab_count
-        WHERE collab_count >= 2
+        WHERE collab_count >= 1
         MERGE (p1)-[r:COLLABORATED_WITH]-(p2)
         SET r.count = collab_count
         RETURN count(r) AS created_count
