@@ -27,7 +27,8 @@ class DoubanSpider(scrapy.Spider):
     def parse_movie(self, response):
         """解析电影详情页，提取 MovieItem，并发现人物"""
         movie = MovieItem()
-        movie['douban_id'] = re.search(r'subject/(\d+)/', response.url).group(1)
+        douban_id_match = re.search(r'subject/(\d+)/', response.url)
+        movie['douban_id'] = douban_id_match.group(1) if douban_id_match else None
         movie['title'] = response.css('span[property="v:itemreviewed"]::text').get()
 
         year_text = response.css('span.year::text').get()
@@ -37,7 +38,8 @@ class DoubanSpider(scrapy.Spider):
         movie['rating'] = float(rating) if rating else None
 
         duration_text = response.css('span[property="v:runtime"]::text').get()
-        movie['duration'] = int(re.search(r'\d+', duration_text).group(0)) if duration_text else None
+        duration_match = re.search(r'\d+', duration_text) if duration_text else None
+        movie['duration'] = int(duration_match.group(0)) if duration_match else None
 
         movie['summary'] = response.css('span[property="v:summary"]::text').get()
         movie['poster_url'] = response.css('img[rel="v:image"]::attr(src)').get()
@@ -69,11 +71,7 @@ class DoubanSpider(scrapy.Spider):
                 )
 
         # 爬取"喜欢这部电影的人也喜欢"中的电影（控制扩展数量）
-        related_count = 0
         for rid in movie['related_movie_ids'][:5]:
-            if related_count >= 5:
-                break
-            related_count += 1
             yield response.follow(
                 f'https://movie.douban.com/subject/{rid}/',
                 callback=self.parse_movie
@@ -82,7 +80,8 @@ class DoubanSpider(scrapy.Spider):
     def parse_person(self, response):
         """解析人物详情页"""
         person = PersonItem()
-        person['douban_id'] = re.search(r'celebrity/(\d+)/', response.url).group(1)
+        person_douban_id_match = re.search(r'celebrity/(\d+)/', response.url)
+        person['douban_id'] = person_douban_id_match.group(1) if person_douban_id_match else None
         person['name'] = response.css('h1::text').get()
 
         alias_text = ''
@@ -95,7 +94,8 @@ class DoubanSpider(scrapy.Spider):
             elif '性别' in text:
                 person['gender'] = text.replace('性别:', '').strip()
             elif '出生日期' in text:
-                person['birth_year'] = re.search(r'\d{4}', text).group(0) if re.search(r'\d{4}', text) else None
+                birth_match = re.search(r'\d{4}', text)
+                person['birth_year'] = birth_match.group(0) if birth_match else None
             elif '出生地' in text:
                 person['birthplace'] = text.replace('出生地:', '').strip()
 
@@ -130,7 +130,7 @@ class DoubanSpider(scrapy.Spider):
     def _extract_actors(self, response):
         """从演员区块提取主演列表（最多取前10位）"""
         actors = []
-        actor_spans = response.css('span[class="actor"] span a')
+        actor_spans = response.css('span.actor span a')
         for a in actor_spans[:10]:
             href = a.css('::attr(href)').get() or ''
             pid = re.search(r'celebrity/(\d+)/', href)
