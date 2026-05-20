@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 340" width="580" height="340">
+  <defs>
+    <style>
+      text { font-family: 'Times New Roman', serif; fill: #222; font-size: 12px; }
+      .title { font-size: 13px; font-weight: bold; }
+      .subtitle { font-size: 11px; fill: #333; font-weight: bold; }
+      .box-person { fill: #eef3f8; stroke: #5a8aad; stroke-width: 1.5; rx: 6; ry: 6; }
+      .box-movie { fill: #f0f4f8; stroke: #3a6b8c; stroke-width: 1.5; rx: 6; ry: 6; }
+      .solid-edge { stroke: #3a6b8c; stroke-width: 1.4; fill: none; marker-end: url(#arr7); }
+      .dashed-edge { stroke: #c0392b; stroke-width: 1.4; fill: none; stroke-dasharray: 8,4; }
+      .edge-label { font-size: 9px; fill: #555; }
+    </style>
+    <marker id="arr7" viewBox="0 0 10 8" refX="0" refY="4" markerWidth="6" markerHeight="5" orient="auto">
+      <path d="M10,0 L0,4 L10,8 Z" fill="#3a6b8c"/>
+    </marker>
+  </defs>
+
+  <rect width="580" height="340" fill="#fff"/>
+
+  <!-- ========= Before ========= -->
+  <rect x="20" y="40" width="250" height="200" fill="#fafbfc" stroke="#ddd" stroke-width="1" rx="4"/>
+  <text x="145" y="62" text-anchor="middle" class="subtitle">(a) 推理前 · 显式关系</text>
+
+  <!-- 周星驰 -->
+  <rect class="box-person" x="40" y="80" width="90" height="38"/>
+  <text x="85" y="96" text-anchor="middle">周星驰</text>
+  <text x="85" y="110" text-anchor="middle" style="font-size:9px;fill:#666;">Person</text>
+
+  <!-- 功夫 -->
+  <rect class="box-movie" x="175" y="80" width="75" height="38"/>
+  <text x="212" y="96" text-anchor="middle">功夫</text>
+  <text x="212" y="110" text-anchor="middle" style="font-size:9px;fill:#666;">Movie</text>
+
+  <!-- 吴孟达 -->
+  <rect class="box-person" x="40" y="170" width="90" height="38"/>
+  <text x="85" y="186" text-anchor="middle">吴孟达</text>
+  <text x="85" y="200" text-anchor="middle" style="font-size:9px;fill:#666;">Person</text>
+
+  <!-- Edges -->
+  <path class="solid-edge" d="M130,99 L175,99"/>
+  <text x="145" y="93" class="edge-label">ACTS_IN</text>
+
+  <path class="solid-edge" d="M115,189 L130,130"/>
+  <text x="100" y="155" class="edge-label">ACTS_IN</text>
+
+  <!-- ========= Arrow ========= -->
+  <text x="300" y="135" text-anchor="middle" style="font-size:22px;fill:#3a6b8c;">→</text>
+  <text x="300" y="152" text-anchor="middle" class="edge-label">推理</text>
+
+  <!-- ========= After ========= -->
+  <rect x="330" y="40" width="225" height="200" fill="#fafbfc" stroke="#ddd" stroke-width="1" rx="4"/>
+  <text x="442" y="62" text-anchor="middle" class="subtitle">(b) 推理后 · 新增隐性关系</text>
+
+  <!-- 周星驰 -->
+  <rect class="box-person" x="345" y="80" width="90" height="38"/>
+  <text x="390" y="96" text-anchor="middle">周星驰</text>
+  <text x="390" y="110" text-anchor="middle" style="font-size:9px;fill:#666;">Person</text>
+
+  <!-- 功夫 -->
+  <rect class="box-movie" x="460" y="80" width="75" height="38"/>
+  <text x="497" y="96" text-anchor="middle">功夫</text>
+  <text x="497" y="110" text-anchor="middle" style="font-size:9px;fill:#666;">Movie</text>
+
+  <!-- 吴孟达 -->
+  <rect class="box-person" x="345" y="170" width="90" height="38"/>
+  <text x="390" y="186" text-anchor="middle">吴孟达</text>
+  <text x="390" y="200" text-anchor="middle" style="font-size:9px;fill:#666;">Person</text>
+
+  <!-- Existing edges -->
+  <path class="solid-edge" d="M435,99 L460,99"/>
+  <path class="solid-edge" d="M410,189 L420,130"/>
+
+  <!-- NEW: COLLABORATED_WITH (dashed) -->
+  <path class="dashed-edge" d="M390,118 C410,150 360,165 390,170"/>
+  <text x="380" y="148" text-anchor="middle" style="font-size:9px;fill:#c0392b;">COLLABORATED_WITH</text>
+  <text x="380" y="160" text-anchor="middle" style="font-size:8px;fill:#c0392b;">(推理生成)</text>
+
+  <!-- Annotation -->
+  <text x="290" y="310" text-anchor="middle" style="font-size:11px;fill:#555;">图7 &emsp;知识推理示意——从显式共存关系推导隐式合作关系</text>
+</svg>

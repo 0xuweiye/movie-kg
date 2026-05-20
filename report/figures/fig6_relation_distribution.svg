@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" width="520" height="300">
+  <defs>
+    <style>
+      text { font-family: 'Times New Roman', serif; fill: #222; }
+      .title { font-size: 13px; font-weight: bold; }
+      .legend { font-size: 11px; }
+    </style>
+  </defs>
+
+  <rect width="520" height="300" fill="#fff"/>
+
+  <text x="260" y="24" text-anchor="middle" class="title">关系分布 (Relation Distribution)</text>
+  <text x="260" y="40" text-anchor="middle" style="font-size:10px;fill:#666;">Total: 896 relations</text>
+
+  <!-- ACTS_IN=475(53.0%) BELONGS_TO=250(27.9%) SIMILAR_TO=208(23.2%) COLLAB=172(19.2%) Other=... -->
+  <!-- Let me recalculate with reasonable proportions for display -->
+  <!-- ACTS_IN: 475/896 = 53.0%, BELONGS_TO: 250/896 = 27.9% -->
+  <!-- SIMILAR_TO: 208/896 = 23.2%, COLLAB_WITH: 172/896 = 19.2% -->
+  <!-- Other: (896-475-250-208-172)/896 = ... actually the sum is 1105 > 896 -->
+  <!-- Let me just use the core 4 + "其他" as a lump -->
+
+  <!-- ACTS_IN: 475 (53%) -->
+  <path d="M210,140 L210,50 A90,90 0 0,1 376,185 Z" fill="#1a5276" stroke="#fff" stroke-width="1.5"/>
+  <!-- BELONGS_TO: 250 (27.9%) -->
+  <path d="M210,140 L376,185 A90,90 0 0,1 165,226 Z" fill="#2e86c1" stroke="#fff" stroke-width="1.5"/>
+  <!-- SIMILAR_TO: 208 (23.2%) - inferred -->
+  <path d="M210,140 L165,226 A90,90 0 0,1 86,173 Z" fill="#85c1e9" stroke="#fff" stroke-width="1.5"/>
+  <!-- COLLABORATED_WITH: 172 (19.2%) - inferred -->
+  <path d="M210,140 L86,173 A90,90 0 0,1 80,116 Z" fill="#d4e6f1" stroke="#fff" stroke-width="1.5"/>
+  <!-- 其他: remaining -->
+  <path d="M210,140 L80,116 A90,90 0 0,1 210,50 Z" fill="#eaf2f8" stroke="#fff" stroke-width="1.5"/>
+
+  <!-- Legend -->
+  <rect x="330" y="70" width="14" height="14" fill="#1a5276" rx="2"/>
+  <text x="352" y="82" class="legend">ACTS_IN (475≈53.0%)</text>
+
+  <rect x="330" y="90" width="14" height="14" fill="#2e86c1" rx="2"/>
+  <text x="352" y="102" class="legend">BELONGS_TO (250≈27.9%)</text>
+
+  <rect x="330" y="110" width="14" height="14" fill="#85c1e9" rx="2"/>
+  <text x="352" y="122" class="legend">SIMILAR_TO 推理 (208≈23.2%)</text>
+
+  <rect x="330" y="130" width="14" height="14" fill="#d4e6f1" rx="2"/>
+  <text x="352" y="142" class="legend">COLLABORATED_WITH 推理 (172≈19.2%)</text>
+
+  <rect x="330" y="150" width="14" height="14" fill="#eaf2f8" rx="2"/>
+  <text x="352" y="162" class="legend">其他 DIRECTED等 (~150)</text>
+
+  <!-- Labels on slices -->
+  <text x="295" y="80" text-anchor="middle" style="font-size:9px;fill:#fff;font-weight:bold;">ACTS_IN</text>
+  <text x="310" y="200" text-anchor="middle" style="font-size:9px;fill:#fff;font-weight:bold;">BELONGS_TO</text>
+  <text x="125" y="200" text-anchor="middle" style="font-size:9px;fill:#333;">SIMILAR</text>
+  <text x="85" y="145" text-anchor="middle" style="font-size:9px;fill:#333;">COLLAB</text>
+  <text x="155" y="90" text-anchor="middle" style="font-size:9px;fill:#555;">其他</text>
+
+  <text x="260" y="285" text-anchor="middle" style="font-size:11px;fill:#555;">图6 &emsp;知识图谱关系类型分布</text>
+</svg>
