@@ -44,6 +44,11 @@ header h1 { font-size: 20px; font-weight: 600; }
 
 .graph-tooltip { position: absolute; background: rgba(0,0,0,0.8); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 12px; pointer-events: none; max-width: 250px; }
 
+.graph-relation-toggle { margin-top: 8px; padding-top: 6px; border-top: 1px solid #ddd; display: flex; gap: 4px; }
+.rel-btn { padding: 2px 8px; border: 1px solid #ccc; border-radius: 4px; background: #fff; font-size: 10px; cursor: pointer; color: #666; }
+.rel-btn:hover { background: #f0f2f5; border-color: #e94560; }
+.rel-btn.active { background: #e94560; color: #fff; border-color: #e94560; }
+
 #path-panel { background: #1a1a2e; color: #fff; padding: 10px 24px; display: flex; align-items: center; gap: 12px; height: 48px; }
 #path-panel h3 { font-size: 14px; color: #e94560; white-space: nowrap; }
 #path-panel input { padding: 4px 10px; border: 1px solid #555; border-radius: 4px; font-size: 12px; background: #2a2a3e; color: #fff; width: 150px; }

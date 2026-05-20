@@ -10,19 +10,43 @@ def get_driver():
     return current_app.config['get_db']()
 
 
+ALL_RELATIONS = ['ACTS_IN', 'DIRECTED', 'WROTE', 'BELONGS_TO',
+                 'PRODUCED_IN', 'IN_LANGUAGE', 'RELEASED_IN',
+                 'COLLABORATED_WITH', 'SIMILAR_TO']
+
+PERSON_RELATIONS = ['ACTS_IN', 'DIRECTED', 'WROTE', 'COLLABORATED_WITH']
+
+ATTR_RELATIONS = ['BELONGS_TO', 'PRODUCED_IN', 'IN_LANGUAGE', 'RELEASED_IN']
+
+
 @graph_bp.route('/graph/entity/<entity_type>/<douban_id>')
 def get_entity_graph(entity_type, douban_id):
-    """获取以某实体为中心的 1-2 跳邻居子图"""
+    """获取以某实体为中心的 1-2 跳邻居子图
+
+    Query params:
+        relations: 'person' (default) | 'all' | 'attr' | 逗号分隔列表
+    """
     try:
         driver = get_driver()
         label = 'Movie' if entity_type == 'movie' else 'Person'
 
+        # 解析关系类型过滤参数
+        rel_param = request.args.get('relations', 'person').strip().lower()
+        if rel_param == 'all':
+            allowed_relations = ALL_RELATIONS
+        elif rel_param == 'person':
+            allowed_relations = PERSON_RELATIONS
+        elif rel_param == 'attr':
+            allowed_relations = ATTR_RELATIONS
+        else:
+            allowed_relations = [r.strip().upper() for r in rel_param.split(',') if r.strip()]
+
+        rel_list_str = ', '.join(f"'{r}'" for r in allowed_relations)
+
         query = f"""
             MATCH (center:{label} {{douban_id: $id}})
             OPTIONAL MATCH (center)-[r]-(neighbor)
-            WHERE type(r) IN ['ACTS_IN', 'DIRECTED', 'WROTE', 'BELONGS_TO',
-                               'PRODUCED_IN', 'IN_LANGUAGE', 'RELEASED_IN',
-                               'COLLABORATED_WITH', 'SIMILAR_TO']
+            WHERE type(r) IN [{rel_list_str}]
             RETURN center, r, neighbor, labels(neighbor) AS neighbor_labels
             LIMIT 200
         """

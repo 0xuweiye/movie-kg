@@ -5,6 +5,7 @@ const GraphVis = {
     linksData: [],
     width: 0,
     height: 0,
+    relationMode: 'person',  // 'person' | 'attr' | 'all'
 
     COLOR: {
         Movie: '#4361ee',
@@ -35,11 +36,28 @@ const GraphVis = {
             this.width = container.clientWidth;
             this.height = container.clientHeight;
             this.svg.attr('width', this.width).attr('height', this.height);
+            if (this.simulation) {
+                this.simulation.force('center', d3.forceCenter(this.width / 2, this.height / 2)).restart();
+            }
         });
     },
 
+    setRelationMode(mode) {
+        this.relationMode = mode;
+        // 高亮当前按钮
+        document.querySelectorAll('.rel-btn').forEach(b => b.classList.remove('active'));
+        const activeBtn = document.querySelector('.rel-btn[data-mode="' + mode + '"]');
+        if (activeBtn) activeBtn.classList.add('active');
+        // 重新加载当前图谱
+        if (this._currentEntityType && this._currentEntityId) {
+            this.loadEntity(this._currentEntityType, this._currentEntityId);
+        }
+    },
+
     loadEntity(entityType, doubanId) {
-        fetch(`/api/graph/entity/${entityType}/${doubanId}`)
+        this._currentEntityType = entityType;
+        this._currentEntityId = doubanId;
+        fetch('/api/graph/entity/' + entityType + '/' + doubanId + '?relations=' + this.relationMode)
             .then(r => r.json())
             .then(data => {
                 if (data.error) { alert(data.error); return; }
@@ -49,7 +67,7 @@ const GraphVis = {
     },
 
     loadPath(fromId, toId, callback) {
-        fetch(`/api/graph/path?from_id=${fromId}&to_id=${toId}`)
+        fetch('/api/graph/path?from_id=' + fromId + '&to_id=' + toId)
             .then(r => r.json())
             .then(data => {
                 if (data.error) { callback(data.error); return; }
@@ -59,12 +77,23 @@ const GraphVis = {
             .catch(err => callback(err.message));
     },
 
+    _getForceX(d) {
+        // 实体类型分区：Movie 偏右，Person 偏左，其他居中
+        if (d.label === 'Movie') return this.width * 0.65;
+        if (d.label === 'Person') return this.width * 0.35;
+        return this.width / 2;
+    },
+
     render(nodes, links) {
         this.nodesData = nodes.map(n => ({...n}));
         this.linksData = links.map(l => ({...l}));
 
         const g = this.svg.select('g.main');
         g.selectAll('*').remove();
+
+        const nodeCount = nodes.length;
+        const linkDist = nodeCount > 30 ? 80 : (nodeCount > 15 ? 120 : 150);
+        const chargeStrength = nodeCount > 30 ? -600 : (nodeCount > 15 ? -500 : -350);
 
         // 箭头定义
         g.append('defs').selectAll('marker')
@@ -90,14 +119,18 @@ const GraphVis = {
             .attr('stroke-dasharray', d => d.type === 'SIMILAR_TO' ? '5,5' : null)
             .attr('marker-end', 'url(#arrowhead)');
 
-        // 连线标签
-        const linkLabel = g.append('g').selectAll('text')
-            .data(links)
-            .enter().append('text')
-            .text(d => d.type.replace(/_/g, ' '))
-            .attr('font-size', '8')
-            .attr('fill', '#999')
-            .attr('text-anchor', 'middle');
+        // 连线标签（仅在节点数少于30时显示，避免拥挤）
+        const showLabels = nodeCount < 30;
+        var linkLabel = null;
+        if (showLabels) {
+            linkLabel = g.append('g').selectAll('text')
+                .data(links)
+                .enter().append('text')
+                .text(d => d.type.replace(/_/g, ' '))
+                .attr('font-size', '8')
+                .attr('fill', '#999')
+                .attr('text-anchor', 'middle');
+        }
 
         // 节点
         const node = g.append('g').selectAll('g')
@@ -156,12 +189,14 @@ const GraphVis = {
             }
         });
 
-        // 力学仿真
+        // 力学仿真 — 增强参数 + 实体分区
+        const self = this;
         this.simulation = d3.forceSimulation(nodes)
-            .force('link', d3.forceLink(links).id(d => d.id).distance(100))
-            .force('charge', d3.forceManyBody().strength(-300))
+            .force('link', d3.forceLink(links).id(d => d.id).distance(linkDist))
+            .force('charge', d3.forceManyBody().strength(chargeStrength))
             .force('center', d3.forceCenter(this.width / 2, this.height / 2))
-            .force('collision', d3.forceCollide(30))
+            .force('collision', d3.forceCollide(40))
+            .force('x', d3.forceX(d => self._getForceX(d)).strength(0.15))
             .on('tick', () => {
                 link
                     .attr('x1', d => d.source.x)
@@ -169,9 +204,11 @@ const GraphVis = {
                     .attr('x2', d => d.target.x)
                     .attr('y2', d => d.target.y);
 
-                linkLabel
-                    .attr('x', d => (d.source.x + d.target.x) / 2)
-                    .attr('y', d => (d.source.y + d.target.y) / 2);
+                if (linkLabel) {
+                    linkLabel
+                        .attr('x', d => (d.source.x + d.target.x) / 2)
+                        .attr('y', d => (d.source.y + d.target.y) / 2);
+                }
 
                 node.attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
             });

@@ -60,6 +60,11 @@
         <span class="legend-item"><span class="legend-dot person"></span> 人物</span>
         <span class="legend-item"><span class="legend-dot genre"></span> 类型</span>
         <span class="legend-item"><span class="legend-dot country"></span> 国家</span>
+        <div class="graph-relation-toggle">
+          <button class="rel-btn active" data-mode="person" onclick="GraphVis.setRelationMode('person')">人物关系</button>
+          <button class="rel-btn" data-mode="attr" onclick="GraphVis.setRelationMode('attr')">属性关系</button>
+          <button class="rel-btn" data-mode="all" onclick="GraphVis.setRelationMode('all')">全部关系</button>
+        </div>
       </div>
       <div class="graph-tooltip" id="graph-tooltip" style="display:none"></div>
     </main>
